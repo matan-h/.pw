@@ -1,0 +1,1 @@
+$profilePath="$HOME\.pw\.profile.ps1";if (Test-Path $profilePath){. $profilePath} else {Write-Host "'$profilePath' is not exists - clone the repository to '$HOME\.pw'"}

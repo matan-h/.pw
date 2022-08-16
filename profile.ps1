@@ -77,8 +77,8 @@ if ($gsudoModule) {
 
 
 # load aliases
-. $PSScriptRoot/.pwaliases.ps1
-. $PSScriptRoot/.pwfunctions.ps1
+. $PSScriptRoot/pwaliases.ps1
+. $PSScriptRoot/pwfunctions.ps1
 if ($promptMode) {
     if (Test-Administrator) {
         Write-Host $paddingString, "$(Get-char 128178) You are Administor" -ForegroundColor "red"

@@ -14,7 +14,7 @@ elseif (Get-Command py -errorAction SilentlyContinue) {
     $pythoncommmand = "py"
 }
 if ($pythoncommmand) {
-    function venv { . venv/bin/Activate.ps1 } # activate python virtualenv
+    function venv { . venv/Scripts/Activate.ps1 } # activate python virtualenv
     function cvenv { & $pythoncommmand -m venv venv }    # create python virtualenv
     function uvenv { cvenv ; venv ; & $pythoncommmand -m pip install -U pip setuptools wheel $args } # create venv;activate it;update packages
 

@@ -2,6 +2,8 @@
 
 heavily inspired from [my .config for Linux](https://github.com/matan-h/.config)
 
+![prompt screenshot](https://github.com/matan-h/.pw/raw/main/screenshots/prompt.jpg)
+
 -   [install.ps1](./install.ps1) - install [scoop](https://scoop.sh),[git](https://gitforwindows.org/),required command-line tools and PowerShell packages, clone this repository to $HOME\\.pw, and copy [documentProfile.ps1](./documentsProfile.ps1) to $PROFILE (PowerShell startup file)
 
 <!-- todo table of cmd-tools and pwsh-packages installed by the installer-->

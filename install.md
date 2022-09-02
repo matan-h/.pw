@@ -2,16 +2,16 @@
 ## Install `mesloLGM NF` (or another [Nerd Font](https://www.nerdfonts.com)):
 
 download https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/Meslo.zip,
-unzip it,select all the fonts in the folder,right click, then click `install`
+unzip it, select all the fonts in the folder, right click, then click `install`
 
-## setup the font:
+## set-up the font:
 ### windows new terminal:
-open settings, click on `Windows PowerShell`, scroll and click `Appearance`,chenge font to `mesloLGM NF`
+open settings, click on `Windows PowerShell`, scroll and click `Appearance`, change font to `mesloLGM NF`
 
-for making powershell more faster, also chenge `cmdline` to `powershell -nologo`
+for making PowerShell faster, also change `cmdline` to `powershell -nologo`
 
-### vscode 
-open `command palette`,type `open settings (json)`,then add this (the impotent is the `fontFamily`, the `-nologo` is to make powershell faster):
+### Visual Studio Code (vscode) 
+open `command palette`, type `open settings (json)`, then add this (the impotent is the `fontFamily`, the `-nologo` is to make PowerShell faster):
 
 ```json
 "terminal.integrated.fontFamily":"MesloLGM NF",
@@ -23,3 +23,11 @@ open `command palette`,type `open settings (json)`,then add this (the impotent i
       }
 }
 ```
+# # install .pw repo
+run this command
+```powershell
+iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/matan-h/.pw/main/install.ps1'))
+```
+done !
+
+![prompt screenshot](https://github.com/matan-h/.pw/raw/main/screenshots/prompt.jpg)

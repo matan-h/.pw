@@ -1,18 +1,5 @@
 # before running the installer:
-# install mesloLGM NF manully - download https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/Meslo.zip
-# setup font:
-# windows new terminal - open settings;click on "windows powershell";scroll and click "Appearance";chenge font to "mesloLGM NF"
-# windows new terminal - for making powershell more faster, chenge cmdline to powershell -nologo
-# vscode - add this to vscode settings: (the impotent is the fontFamily, the nologo is only to make powershell faster )
-<#
-"terminal.integrated.fontFamily":"MesloLGM NF",
-"terminal.integrated.profiles.windows": {
-      "PowerShell": {
-        "source": "PowerShell",
-        "icon": "terminal-powershell",
-        "args": ["-nologo"]
-      },
-#>
+# see install.md
 if ( -Not (Get-Command scoop -errorAction SilentlyContinue)) { Invoke-WebRequest -useb get.scoop.sh | Invoke-Expression } # install scoop if not installed
 if ( -Not (Get-Command git -errorAction SilentlyContinue)) { winget install --id Git.Git -e --source winget } # install git if not installed
 

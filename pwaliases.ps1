@@ -7,7 +7,7 @@ Set-Alias g git -Description "one letter shortcut to git"
 Set-Alias c z -Description "zoxide (smarter cd command)"
 Set-Alias aliases Get-Alias -Description "get list of aliases"
 Set-Alias lsalias Get-Alias
-
+Set-Alias unalias Remove-Alias
 # macos like
 Set-Alias pbcopy Set-Clipboard 
 Set-Alias pbpaste Get-Clipboard
@@ -31,6 +31,4 @@ if (Get-Command duf.exe -errorAction SilentlyContinue) {
 if ((Get-Command winfetch.ps1 -errorAction SilentlyContinue) -and (-not (Get-Command neofetch.cmd -errorAction SilentlyContinue))) {
     Set-Alias neofetch winfetch.ps1
 }
-
-Set-Alias scoop ScoopCommand 
 

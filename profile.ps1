@@ -1,5 +1,5 @@
 $envArgs = [Environment]::GetCommandLineArgs()
-$promptMode = (-Not (($envArgs -contains "-Command") -or ($envArgs -contains "-c"))) # only import methods and add aliases...
+$promptMode = (-Not (($envArgs -contains "-Command") -or ($envArgs -contains "-c")) -or (($envArgs -contains "-Interactive"))) # only import methods and add aliases if powershell just run command
 
 # global settings:
 [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding # set pw to utf-8:
@@ -11,8 +11,8 @@ if ($promptMode) {
     if (-Not ([Environment]::GetCommandLineArgs() -contains "-nologo")) {
         Clear-Host
     }
-    $curUser = (Get-ChildItem Env:\USERNAME).Value
-    $curComp = (Get-ChildItem Env:\COMPUTERNAME).Value
+    $curUser = $env:USERNAME ?? $env:USER
+    $curComp = $(hostname)
     $identity = "$curUser@$curComp"
     $paddingString = " " * 2
 
@@ -29,46 +29,66 @@ if ($promptMode) {
     # add search history up/down
     Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
     Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
-    # For git rebasing
 
-    function Get-char($Number) { [System.Char]::ConvertFromUtf32($Number) }
+    function Get-char($Number) { [System.Char]::ConvertFromUtf32($Number) } # get emoji by utf-8 number
     Write-Host $paddingString, "$(Get-char 128187) Windows PowerShell $($Host.Version.Major).$($Host.Version.Minor)" -ForegroundColor "White"
     # external shell modules
-    Import-Module posh-git # add autocomplete for git
+    Import-Module posh-git -ErrorAction SilentlyContinue -ErrorVariable noGitPosh # add autocomplete for git
+    if ($noGitPosh){
+        Write-Host "$paddingString warning : the powershell module 'posh-git' cannot be imported. " -ForegroundColor "red"
+    }
 
     # Fzf:
-    Import-Module PSFzf
+    if (Import-Module PSFzf -ErrorAction SilentlyContinue){
     Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+f' -PSReadlineChordReverseHistory 'Ctrl+r' # ctrl+f->fzf in files,ctrl+r->fzf in history
+    }
     ## init the shell
-    function Test-Administrator { (New-Object Security.Principal.WindowsPrincipal ([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator) }
+    function Test-Administrator { 
+        if ($IsLinux) { return $env:USER -eq 'root' }
+        (New-Object Security.Principal.WindowsPrincipal ([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator) 
+    }
     $THEME = "agnoster.minimal.omp.json"
     if (Test-Administrator) {
         $THEME = "spaceship.omp.json"
     }
     Write-Host $paddingString, "'``' is the escape character (use '``n' instead of '\n')" -ForegroundColor "Green"
-    oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH/$THEME" | Invoke-Expression
-    if ([Console]::CapsLock){ # if capslock is on
+    $poshPath = $env:POSH_THEMES_PATH ?? "$HOME/.poshthemes"
+    oh-my-posh init pwsh --config "$poshPath/$THEME" | Invoke-Expression
+    if ($IsLinux) {
+        if (Get-Command xset -errorAction SilentlyContinue) {
+            $caps = ((xset -q | Select-String "Caps[ Lock]*:[ ]*?(on|off)" | ForEach-Object { $_.Matches.Groups[1].Value }) -eq "on")
+        }
+    }
+    else {
+        $caps = [Console]::CapsLock;
+    }
+    if ($caps) {
+        # if capslock is on
         Write-host $paddingString "$(Get-char 128288) CAPS-LOCK IS ON" -ForegroundColor "Red"
     }
     # zoxide
-    Invoke-Expression (& {
-            $hook = if ($PSVersionTable.PSVersion.Major -lt 6) { 'prompt' } else { 'pwd' }
+    if (Get-Command zoxide -errorAction SilentlyContinue) {
+        Invoke-Expression (& {
+                $hook = if ($PSVersionTable.PSVersion.Major -lt 6) { 'prompt' } else { 'pwd' }
     (zoxide init --hook $hook powershell | Out-String)
-        })
+            })
+    }
     Write-Host $paddingString, "$(Get-char 128104) $identity" -ForegroundColor "Yellow"
     # Set up word autocompletion for winget. 
-    Register-ArgumentCompleter -Native -CommandName winget -ScriptBlock {
-        param($wordToComplete, $commandAst, $cursorPosition)
-        [Console]::InputEncoding = [Console]::OutputEncoding = $OutputEncoding = [System.Text.Utf8Encoding]::new()
-        $Local:word = $wordToComplete.Replace('"', '""')
-        $Local:ast = $commandAst.ToString().Replace('"', '""')
-        winget complete --word="$Local:word" --commandline "$Local:ast" --position $cursorPosition | ForEach-Object {
-            [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+    if (Get-Command winget -errorAction SilentlyContinue) {
+        Register-ArgumentCompleter -Native -CommandName winget -ScriptBlock {
+            param($wordToComplete, $commandAst, $cursorPosition)
+            [Console]::InputEncoding = [Console]::OutputEncoding = $OutputEncoding = [System.Text.Utf8Encoding]::new()
+            $Local:word = $wordToComplete.Replace('"', '""')
+            $Local:ast = $commandAst.ToString().Replace('"', '""')
+            winget complete --word="$Local:word" --commandline "$Local:ast" --position $cursorPosition | ForEach-Object {
+                [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+            }
         }
     }
 }
 # add bash commands to path
-if (Test-Path "C:\Program Files\Git\usr\bin"){$env:Path += ';C:\Program Files\Git\usr\bin'}
+if (Test-Path "C:\Program Files\Git\usr\bin") { $env:Path += ';C:\Program Files\Git\usr\bin' }
 # external modules
 $gsudoModule = Get-Command gsudoModule.psd1 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source # search for gsudo
 if ($gsudoModule) {

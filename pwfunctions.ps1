@@ -68,21 +68,6 @@ function FishMode { Set-PSReadLineOption -PredictionViewStyle InlineView }   # s
 
 # scoop
 if (Get-Command scoop -errorAction SilentlyContinue) {
-    function ScoopCommand {
-        param(
-            # [Parameter(position=0)]
-            $command = $null,
-            [Parameter(ValueFromRemainingArguments)]
-            $apps = $null
-        )
-
-        scoop.ps1 $command $apps
-        $configJson = "${env:USERPROFILE}\.config\scoop\config.json"
-        $scoopConfig = Get-Content $configJson -Raw | ConvertFrom-Json
-        $scoopConfig.lastupdate = [System.DateTime]::Now.ToString('o')
-        $scoopConfig | ConvertTo-Json -Depth 2 | Set-Content $configJson
-    }
-
     # scoop - package manager 2
     function scup() {
         scoop update "*"
@@ -104,6 +89,7 @@ if (Get-Command winget -errorAction SilentlyContinue) {
     function winsearch { winget search $args }    # search package remotely
     function winrm { winget uninstall $args }     # Remove Package
     function winup { winget upgrade -a }          #  upgrade all winget packages
+    function wingets { winget $args -s winget}    #  use winget source insted of msstore
 }
 # all system
 if ((Get-Command winget -errorAction SilentlyContinue ) -and (Get-Command scoop -errorAction SilentlyContinue)){
@@ -146,7 +132,7 @@ function yst { yarn start } #   Auto stage all modified files and commit
 function ya { yarn add } # pull chenges from the server
 function yad { yarn add -D } # yarn add dev
 }
-# linux like
+# linux/bash like
 if (Get-Command grep.exe -errorAction SilentlyContinue) {
 function grep { grep.exe --color=always @args } # grep with color
 }
@@ -161,10 +147,15 @@ function take($dir) { mkdir $dir; Set-Location $dir } # mkdir && cd
 function poweroff { shutdown /hybrid /s /t $($args[0] * 60) } 
 function bg { Start-Process powershell -NoNewWindow "-Command $args" } # send command to another powershell # gh:camba3d
 function edit { & "code" -g @args } # open file in vscode # gh:mikemaccana
-
+function export {
+    $envVar = $args[0].split("=")
+    $envVarName = $envVar[0]
+    $envVarValue = $envVar[1]
+    Set-Item -Path "ENV:\$envVarName" -Value $envVarValue
+}
 # cmd like:
 function rename { Rename-Item -Verbose @args }          
-function mklink { cmd.exe /c mklink $Args }
+function mklink { if (Get-Command ln -ErrorAction SilentlyContinue){ln -s $Args} else{cmd.exe /c mklink $Args} }
 
 # web apps
 # translate
@@ -191,5 +182,4 @@ list of applications:
 * yarn - just some shortcuts
 * git - shortcuts
 * helix - editor
-* vim/neovim - editor
 #>

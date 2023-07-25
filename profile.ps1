@@ -11,7 +11,7 @@ if ($promptMode) {
     if (-Not ([Environment]::GetCommandLineArgs() -contains "-nologo")) {
         Clear-Host
     }
-    $curUser = $env:USERNAME ?? $env:USER
+    $curUser = if ($env:USERNAME) {$env:USERNAME} else {$env:USER}
     $curComp = $(hostname)
     $identity = "$curUser@$curComp"
     $paddingString = " " * 2
@@ -52,7 +52,7 @@ if ($promptMode) {
         $THEME = "spaceship.omp.json"
     }
     Write-Host $paddingString, "'``' is the escape character (use '``n' instead of '\n')" -ForegroundColor "Green"
-    $poshPath = $env:POSH_THEMES_PATH ?? "$HOME/.poshthemes"
+    $poshPath = if ($env:POSH_THEMES_PATH){$env:POSH_THEMES_PATH} else{"$HOME/.poshthemes"}
     oh-my-posh init pwsh --config "$poshPath/$THEME" | Invoke-Expression
     if ($IsLinux) {
         if (Get-Command xset -errorAction SilentlyContinue) {

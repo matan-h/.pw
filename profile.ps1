@@ -12,7 +12,7 @@ if ($promptMode) {
         Clear-Host
     }
     $curUser = if ($env:USERNAME) {$env:USERNAME} else {$env:USER}
-    $curComp = $(hostname)
+    $curComp = if ($env:computername){$env:computername} else {$(hostname)}
     $identity = "$curUser@$curComp"
     $paddingString = " " * 2
 

@@ -1,34 +1,44 @@
-Set-Alias create New-Item
+function add_alias # function to add global alias
+ {
+     Param(
+         [String] $Name,
+         [String] $Value,
+         [Parameter(Mandatory=$false)][string] $Description
+     )
+     Set-Alias -Option AllScope -Scope Global -Force @args -Name $Name -Value $Value -Description $Description
+ }
 
-Set-Alias l ls -Option AllScope -Description "one letter shortcut to lsd (l->ls->lsd)"
-Set-Alias sl ls -Option AllScope -Force
-Set-Alias helix hx -Description "helix (noevim inspired editor) is 'helix' in linux and 'hx.exe' in windows"
-Set-Alias g git -Description "one letter shortcut to git"
-Set-Alias c z -Description "zoxide (smarter cd command)"
-Set-Alias aliases Get-Alias -Description "get list of aliases"
-Set-Alias lsalias Get-Alias
-Set-Alias unalias Remove-Alias
+add_alias create New-Item
+
+add_alias l ls -Description "one letter shortcut to lsd (l->ls->lsd)"
+add_alias sl ls
+add_alias helix hx -Description "helix (noevim inspired editor) is 'helix' in linux and 'hx.exe' in windows"
+add_alias g git -Description "one letter shortcut to git"
+add_alias c z -Description "zoxide (smarter cd command)"
+add_alias aliases Get-Alias -Description "get list of aliases"
+add_alias lsalias Get-Alias
+add_alias unalias Remove-Alias
 # macos like
-Set-Alias pbcopy Set-Clipboard 
-Set-Alias pbpaste Get-Clipboard
+add_alias pbcopy Set-Clipboard 
+add_alias pbpaste Get-Clipboard
 
 # linux like:
 if (Get-Command lsd.exe -errorAction SilentlyContinue) {
-    Set-Alias ls lsd.exe -Option AllScope
+    add_alias ls lsd.exe
 }
-Set-Alias clippaste Get-Clipboard
-Set-Alias clipcopy Set-Clipboard
-Set-Alias time Measure-Command -Description "Measures the time it takes to run script block"
-Set-Alias whereis which
-Set-Alias touch New-Item # gh:tehmantra
+add_alias clippaste Get-Clipboard
+add_alias clipcopy Set-Clipboard
+add_alias time Measure-Command -Description "Measures the time it takes to run script block"
+add_alias whereis which
+add_alias touch New-Item # gh:tehmantra
 if (Get-Command ntop.exe -errorAction SilentlyContinue) { 
-    Set-Alias htop ntop.exe # gh:AndreasBrostrom
-    Set-Alias top ntop.exe  # gh:AndreasBrostrom
+    add_alias htop ntop.exe # gh:AndreasBrostrom
+    add_alias top ntop.exe  # gh:AndreasBrostrom
 }
 if (Get-Command duf.exe -errorAction SilentlyContinue) {
-    Set-Alias df duf.exe
+    add_alias df duf.exe
 }
 if ((Get-Command winfetch.ps1 -errorAction SilentlyContinue) -and (-not (Get-Command neofetch.cmd -errorAction SilentlyContinue))) {
-    Set-Alias neofetch winfetch.ps1
+    add_alias neofetch winfetch.ps1
 }
 

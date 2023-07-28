@@ -1,12 +1,11 @@
-function add_alias # function to add global alias
- {
-     Param(
-         [String] $Name,
-         [String] $Value,
-         [Parameter(Mandatory=$false)][string] $Description
-     )
-     Set-Alias -Option AllScope -Scope Global -Force @args -Name $Name -Value $Value -Description $Description
- }
+function add_alias { # function to add global alias
+    Param(
+        [String] $Name,
+        [String] $Value,
+        [Parameter(Mandatory = $false)][string] $Description
+    )
+    Set-Alias -Option AllScope -Scope Global -Force @args -Name $Name -Value $Value -Description $Description
+}
 
 add_alias create New-Item
 

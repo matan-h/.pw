@@ -17,10 +17,10 @@ function global:_init_posh {
     }
 
     if ($posh_error) {
-         Write-host "error: cannot load oh-my-posh (make sure oh-my-posh is in `$PATH.)`n giving you a fallback prompt`n" -ForegroundColor red
-         # add fallback prompt
-         function global:prompt { "PS  $pwd> " };prompt;
-         }
+        Write-host "error: cannot load oh-my-posh (make sure oh-my-posh is in `$PATH.)`n giving you a fallback prompt`n" -ForegroundColor red
+        # add fallback prompt
+        function global:prompt { "PS  $pwd> " }; prompt;
+    }
     else { prompt; }; # at this point, oh-my-posh take over the prompt function
 }
 
@@ -57,9 +57,9 @@ function global:_init_external {
     # this hook would be needed until zoxide merge my pull request
     #>
     Invoke-Expression (& {
-        $hook = if ($PSVersionTable.PSVersion.Major -lt 6) { 'prompt' } else { 'pwd' }
-        (zoxide init --hook $hook powershell | Out-String).Replace("function __","function global:__")
-    })
+            $hook = if ($PSVersionTable.PSVersion.Major -lt 6) { 'prompt' } else { 'pwd' }
+        (zoxide init --hook $hook powershell | Out-String).Replace("function __", "function global:__")
+        })
     
     # Set up word autocompletion for winget. 
     if (Get-Command winget -errorAction SilentlyContinue) {
@@ -99,4 +99,4 @@ function global:Test-Administrator {
     (New-Object Security.Principal.WindowsPrincipal ([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator) 
 }
 
-if ($DEBUG){prompt;} # for debug. else powershell would not display any error, but just display the fallback prompt
+if ($DEBUG) { prompt; } # for debug. else powershell would not display any error, but just display the fallback prompt

@@ -28,7 +28,7 @@ if (Get-Command http.exe -errorAction SilentlyContinue) {
 }
 # files tools:
 if (Get-Command pygmentize -errorAction SilentlyContinue) {
-    function global:ccat { pygmentize -g @args}  # color cat using pygmentize
+    function global:ccat { pygmentize -g @args }  # color cat using pygmentize
 }
 function global:FormatJson { $Args | ConvertFrom-Json | ConvertTo-Json } # gh:tehmantra
 # windows useful system tools
@@ -93,16 +93,16 @@ if (Get-Command winget -errorAction SilentlyContinue) {
     function global:winsearch { winget search $args }    # search package remotely
     function global:winrm { winget uninstall $args }     # Remove Package
     function global:winup { winget upgrade -a }          #  upgrade all winget packages
-    function global:wingets { winget $args -s winget}    #  use winget source insted of msstore
+    function global:wingets { winget $args -s winget }    #  use winget source insted of msstore
 }
 # all system
-if ((Get-Command winget -errorAction SilentlyContinue ) -and (Get-Command scoop -errorAction SilentlyContinue)){
-function global:sysup { scup ; winup }        #  update winget
-function global:Update() {
-    UpdatePW # update .pw
-    gsudo Update-Module # update all modules as adminstor
-    scup # update all scoop apps
-}
+if ((Get-Command winget -errorAction SilentlyContinue ) -and (Get-Command scoop -errorAction SilentlyContinue)) {
+    function global:sysup { scup ; winup }        #  update winget
+    function global:Update() {
+        UpdatePW # update .pw
+        gsudo Update-Module # update all modules as adminstor
+        scup # update all scoop apps
+    }
 }
 # .pw 
 function global:UpdatePW() {
@@ -125,16 +125,16 @@ function global:cd.. { Set-Location .. }
 function global:code. { code . }
 
 # git
-function global:gitam { git commit -am @args} #  Auto stage all modified files and commit
-function global:gitp { git pull @args} # pull chenges from the server
+function global:gitam { git commit -am @args } #  Auto stage all modified files and commit
+function global:gitp { git pull @args } # pull chenges from the server
 function global:gitst { git status @args } # pull chenges from the server
 
 # yarn
 if (Get-Command yarn -errorAction SilentlyContinue) {
 
-function global:yst { yarn start @args} #   yarn start command
-function global:ya { yarn add @args} # yarn add package
-function global:yad { yarn add -D @args} # yarn add dev package
+    function global:yst { yarn start @args } #   yarn start command
+    function global:ya { yarn add @args } # yarn add package
+    function global:yad { yarn add -D @args } # yarn add dev package
 }
 # linux/bash like
 
@@ -149,7 +149,7 @@ function global:bg { Start-Process powershell -NoNewWindow "-Command $args" } # 
 function global:edit { & "code" -g @args } # open file in vscode # gh:mikemaccana
 # cmd like:
 function global:rename { Rename-Item -Verbose @args }          
-function global:mklink { if (Get-Command ln -ErrorAction SilentlyContinue){ln -s $Args} else{cmd.exe /c mklink $Args} }
+function global:mklink { if (Get-Command ln -ErrorAction SilentlyContinue) { ln -s $Args } else { cmd.exe /c mklink $Args } }
 
 # web apps
 # translate

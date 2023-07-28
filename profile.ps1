@@ -8,8 +8,19 @@ function global:_init_posh {
         $THEME = "spaceship.omp.json"
     }
     $poshPath = if ($env:POSH_THEMES_PATH) { $env:POSH_THEMES_PATH } else { "$HOME/.poshthemes" }
-    oh-my-posh init pwsh --config "$poshPath/$THEME" | Invoke-Expression -ErrorVariable posh_error
-    if ($posh_error) { Write-host "error: cannot load posh." }
+    $posh_error = $false
+    try {
+        oh-my-posh init pwsh --config "$poshPath/$THEME" | Invoke-Expression
+    }
+    catch {
+        $posh_error = $true
+    }
+
+    if ($posh_error) {
+         Write-host "error: cannot load oh-my-posh (make sure oh-my-posh is in `$PATH.)`n giving you a fallback prompt`n" -ForegroundColor red
+         # add fallback prompt
+         function global:prompt { "PS  $pwd> " };prompt;
+         }
     else { prompt; }; # at this point, oh-my-posh take over the prompt function
 }
 
@@ -35,12 +46,13 @@ function global:_config_env {
 }
 function global:_init_external {
     # Fzf:
-    if (Import-Module PSFzf -ErrorAction SilentlyContinue) {
+    Import-Module PSFzf -ErrorAction SilentlyContinue -Scope Global
+    if (Get-Module PSFzf -ErrorAction SilentlyContinue) {
         Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+f' -PSReadlineChordReverseHistory 'Ctrl+r' # ctrl+f->fzf in files,ctrl+r->fzf in history
     }
     # zoxide
     <#
-    # powershell function define in functions, are only acssesable outside of them, if the function is define with "function global:",
+    # powershell function define in functions, are only acssesable outside of them, if the function is define using "function global:",
     # so this hook is replacing all zoxide function with global functions:
     # this hook would be needed until zoxide merge my pull request
     #>

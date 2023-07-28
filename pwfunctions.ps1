@@ -65,7 +65,8 @@ if (Get-Command bat -errorAction SilentlyContinue) {
 }
 
 function global:pwconfig { code $PSScriptRoot/pwaliases.ps1 $PSScriptRoot/pwfunctions.ps1 $PSScriptRoot/profile.ps1 $PROFILE } # open vscode on pwaliases,pwfunctions and $PROFILE
-function global:pwrc { &([Environment]::GetCommandLineArgs()[0]) }  # rerun powershell # TODO : find better way to reload powershell profile
+# function global:pwrc { &([Environment]::GetCommandLineArgs()[0]) }  # rerun powershell # TODO : find better way to reload powershell profile
+function global:pwrc { . $PROFILE }  # refresh $PROFILE
 function global:ListViewMode { Set-PSReadLineOption -PredictionViewStyle ListView } # set powershell auto-suggestion to listview
 function global:FishMode { Set-PSReadLineOption -PredictionViewStyle InlineView }   # set powershell auto-suggestion to normal (fish-like)
 
@@ -137,7 +138,7 @@ function global:yad { yarn add -D @args} # yarn add dev package
 }
 # linux/bash like
 
-function global:grep { Select-String -AllMatches @args } # bash grep.exe usually dont work nice with powershell
+function global:grep { Select-String -AllMatches $args } # bash grep.exe usually dont work nice with powershell
 function global:mkdirs { New-Item -ItemType Directory -Path @args } # Create directories recursively with verbose  # TODO
 function global:rmtree { Remove-Item -Recurse -Force $args }     # remove folder recursively
 function global:sudoterm { gsudo -d wt } # start windows terminal with administrator 

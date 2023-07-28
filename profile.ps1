@@ -1,8 +1,8 @@
 [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding # set pw to utf-8:
 
-$DEBUG = $env:PW_DEBUG # set to $true for debug the prompt function
+$DEBUG = $env:PW_DEBUG # set $env:PW_DEBUG to $true for debug the prompt function
 $_first_prompt = $true;
-function _init_posh {
+function global:_init_posh {
     $THEME = "agnoster.minimal.omp.json"
     if (Test-Administrator) {
         $THEME = "spaceship.omp.json"
@@ -13,7 +13,7 @@ function _init_posh {
     else { prompt; }; # at this point, oh-my-posh take over the prompt function
 }
 
-function _config_psreadline() {
+function global:_config_psreadline() {
     Set-PSReadLineOption -EditMode Emacs # set line edit mode to emacs (like bash default)
     Set-PSReadLineOption -PredictionSource History # add autosuggestions
     Set-PSReadLineOption -BellStyle None # no bell
@@ -27,13 +27,13 @@ function _config_psreadline() {
     Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
     Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
 }
-function _config_env {
+function global:_config_env {
     Set-Variable -Name ConfirmPreference -Value High -Scope Global  # prevent windows from popping up confirmation boxes 
     $env:EDITOR = 'code --wait' # --wait required, see https://github.com/Microsoft/vscode/issues/23219 # gh:mikemaccana 
     # add bash commands to path
     if (Test-Path "C:\Program Files\Git\usr\bin") { $env:Path += ';C:\Program Files\Git\usr\bin' }
 }
-function _init_external {
+function global:_init_external {
     # Fzf:
     if (Import-Module PSFzf -ErrorAction SilentlyContinue) {
         Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+f' -PSReadlineChordReverseHistory 'Ctrl+r' # ctrl+f->fzf in files,ctrl+r->fzf in history
@@ -68,7 +68,7 @@ function _init_external {
     }
 }
 
-function _init {
+function global:_init {
     _init_posh;
     _config_psreadline;
     _config_env;
@@ -78,11 +78,11 @@ function _init {
 }
 
 
-function prompt {
+function global:prompt {
     if ($_first_prompt) { _init; $_first_prompt = $false }    
 }
 # utils
-function Test-Administrator { 
+function global:Test-Administrator { 
     if ($IsLinux) { return $env:USER -eq 'root' }
     (New-Object Security.Principal.WindowsPrincipal ([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator) 
 }
